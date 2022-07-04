@@ -89,9 +89,12 @@ function createWindow(): void {
 
   mainWindow = new BrowserWindow({
     title: app.name,
-    titleBarStyle: config.get(ConfigKey.CompactHeader)
-      ? 'hiddenInset'
-      : 'default',
+    // TitleBarStyle: config.get(ConfigKey.CompactHeader)
+    //   ? 'hiddenInset'
+    //   : 'default',
+    // hidden frame and title bar https://www.electronjs.org/zh/docs/latest/api/frameless-window
+    titleBarStyle: 'hidden',
+    frame: false,
     minWidth: 780,
     width: lastWindowState.bounds.width,
     minHeight: 200,
