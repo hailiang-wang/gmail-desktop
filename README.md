@@ -1,6 +1,6 @@
 <div align="center">
 	<img src="media/icon.svg" width="200" height="200">
-	<h1>Gmail Desktop</h1>
+	<h1>Evernote Desktop</h1>
 	<p>
 		Nifty Gmail desktop app for macOS, Linux & Windows
 	</p>
@@ -45,7 +45,7 @@ Or with [Homebrew Cask](https://caskroom.github.io/): `brew install timche-gmail
 
 ### Dark Mode
 
-While Gmail offers a dark theme, it's unfortunately not a dark mode, so areas such as compose and emails remain untouched and keep their light appearance. Gmail Desktop comes with dark mode (powered by [Dark Reader](https://github.com/darkreader/darkreader)) and makes composing and reading emails easy on the eye as well. You can configure dark mode in the `Settings` → `Dark Mode` menu.
+While Gmail offers a dark theme, it's unfortunately not a dark mode, so areas such as compose and emails remain untouched and keep their light appearance. Evernote Desktop comes with dark mode (powered by [Dark Reader](https://github.com/darkreader/darkreader)) and makes composing and reading emails easy on the eye as well. You can configure dark mode in the `Settings` → `Dark Mode` menu.
 
 **Note:** It's recommended to set the [Gmail theme to "Default"](https://mail.google.com/#settings/oldthemes) in order for dark mode to work properly.
 
@@ -57,7 +57,7 @@ While Gmail offers a dark theme, it's unfortunately not a dark mode, so areas su
 
 ### Appearance Customizations
 
-Gmail Desktop provides few appearance customizations to simplify the default Gmail layout and remove some clutter. These customizations are enabled by default and configurable in the `Settings` → `Appearance` menu.
+Evernote Desktop provides few appearance customizations to simplify the default Gmail layout and remove some clutter. These customizations are enabled by default and configurable in the `Settings` → `Appearance` menu.
 
 - `Compact Header`: Makes the Gmail header more compact to provide a more native feel.
 - `Hide Support`: Hides the support button in the header.
@@ -83,11 +83,11 @@ Confirm email links can be disabled at `Settings` → `Confirm External Links be
 
 ### Clean Email Links from Google
 
-Some Email links in Gmail are prepended with `https://google.com/url?q=<actual_url>`, which is somtimes not visible to the user. We believe it does some sort of analytics or tracking, so not necesary. Gmail Desktop automatically cleans links from this, so the actual URL will be directly opened in your default browser.
+Some Email links in Gmail are prepended with `https://google.com/url?q=<actual_url>`, which is somtimes not visible to the user. We believe it does some sort of analytics or tracking, so not necesary. Evernote Desktop automatically cleans links from this, so the actual URL will be directly opened in your default browser.
 
 ### Menu Bar Mode _(macOS)_
 
-You can enable the menu bar mode with `Settings` → `Show Menu Bar Icon` and remove Gmail Desktop from the dock with `Hide Dock Icon` in the menu bar icon menu.
+You can enable the menu bar mode with `Settings` → `Show Menu Bar Icon` and remove Evernote Desktop from the dock with `Hide Dock Icon` in the menu bar icon menu.
 
 ## Troubleshooting
 
@@ -100,15 +100,15 @@ In December 2019 Google has decided to block unsupported user agents, such as El
 
 We doubt this will ever change, so we are required to override the Electron default user agent with a supported user agent in order to sign in successfully.
 
-Gmail Desktop offers to attempt to automatically fix the user agent when the issue above occurs:
+Evernote Desktop offers to attempt to automatically fix the user agent when the issue above occurs:
 
 <div align="center">
   <img src="media/sign-in-fix-dialog.png" width="535">
 </div>
 
-Clicking on `Yes` will set a [custom user agent (based on Firefox)](https://github.com/timche/gmail-desktop/blob/main/src/user-agents.json) in the app config and Gmail Desktop will be restarted.
+Clicking on `Yes` will set a [custom user agent (based on Firefox)](https://github.com/timche/gmail-desktop/blob/main/src/user-agents.json) in the app config and Evernote Desktop will be restarted.
 
-In case the custom user agent isn't working anymore, you'll be offered to let Gmail Desktop to attempt to fix it again or trigger it manually at `Settings` → `Advanced` → `User Agent` → `Attempt User Agent Fix`.
+In case the custom user agent isn't working anymore, you'll be offered to let Evernote Desktop to attempt to fix it again or trigger it manually at `Settings` → `Advanced` → `User Agent` → `Attempt User Agent Fix`.
 
 If the automatic user agent fix isn't working at all or you want to set your own custom user agent, you are able to do that at `Settings` → `Advanced` → `User Agent` → `Set Custom User Agent`, which opens the app config in your editor.
 
@@ -122,7 +122,7 @@ Example:
 }
 ```
 
-Save the config, restart Gmail Desktop and sign in again.
+Save the config, restart Evernote Desktop and sign in again.
 
 </details>
 
@@ -195,4 +195,4 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Disclaimer
 
-Gmail Desktop is a third-party app and not affiliated with Google.
+Evernote Desktop is a third-party app and not affiliated with Google.

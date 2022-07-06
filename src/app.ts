@@ -6,8 +6,6 @@ import {
   shell,
   BrowserWindow,
   Menu,
-  Tray,
-  MenuItemConstructorOptions,
   dialog,
   nativeTheme
 } from 'electron'
@@ -21,7 +19,7 @@ import {
 } from './custom-styles'
 import { init as initDebug } from './debug'
 import { init as initDownloads } from './downloads'
-import { platform, getUrlAccountId, createTrayIcon } from './helpers'
+import { platform, getUrlAccountId } from './helpers'
 import { initOrUpdateMenu } from './menu'
 import {
   setAppMenuBarVisibility,
@@ -48,16 +46,10 @@ const shouldStartMinimized =
   app.commandLine.hasSwitch('launch-minimized') ||
   config.get(ConfigKey.LaunchMinimized)
 
-const trayIcon = createTrayIcon(false)
-const trayIconUnread = createTrayIcon(true)
-
-app.setAppUserModelId('io.cheung.gmail-desktop')
+app.setAppUserModelId('io.hailiang-wang.evernote-desktop')
 
 let mainWindow: BrowserWindow
-let replyToWindow: BrowserWindow
 let isQuitting = false
-let tray: Tray | undefined
-let trayContextMenu: Menu
 
 if (!app.requestSingleInstanceLock()) {
   app.quit()
@@ -90,8 +82,8 @@ function createWindow(): void {
   mainWindow = new BrowserWindow({
     title: app.name,
     // TitleBarStyle: config.get(ConfigKey.CompactHeader)
-    //   ? 'hiddenInset'
-    //   : 'default',
+    // ? 'hiddenInset'
+    // : 'default',
     // hidden frame and title bar https://www.electronjs.org/zh/docs/latest/api/frameless-window
     titleBarStyle: 'hidden',
     frame: false,
@@ -103,7 +95,6 @@ function createWindow(): void {
     y: lastWindowState.bounds.y,
     webPreferences: {
       nodeIntegration: false,
-      nativeWindowOpen: true,
       preload: path.join(__dirname, 'preload')
     },
     show: !shouldStartMinimized,
@@ -113,19 +104,21 @@ function createWindow(): void {
     darkTheme: nativeTheme.shouldUseDarkColors
   })
 
-  if (lastWindowState.fullscreen && !mainWindow.isFullScreen()) {
-    mainWindow.setFullScreen(lastWindowState.fullscreen)
-  }
+  // MainWindow.setFullScreen(true);
+  // if (lastWindowState.fullscreen && !mainWindow.isFullScreen()) {
+  //   mainWindow.setFullScreen(lastWindowState.fullscreen)
+  // }
 
-  if (lastWindowState.maximized && !mainWindow.isMaximized()) {
-    mainWindow.maximize()
-  }
+  mainWindow.maximize()
+  // If (lastWindowState.maximized && !mainWindow.isMaximized()) {
+  //   mainWindow.maximize()
+  // }
 
   if (is.linux || is.windows) {
     setAppMenuBarVisibility()
   }
 
-  mainWindow.loadURL('https://mail.google.com')
+  mainWindow.loadURL('https://www.evernote.com/Home.action')
 
   mainWindow.on('app-command', (_event, command) => {
     if (command === 'browser-backward' && mainWindow.webContents.canGoBack()) {
@@ -205,53 +198,6 @@ function createWindow(): void {
       mainWindow.hide()
     }
   })
-
-  mainWindow.on('hide', () => {
-    toggleAppVisiblityTrayItem(false)
-  })
-
-  mainWindow.on('show', () => {
-    toggleAppVisiblityTrayItem(true)
-  })
-
-  function toggleAppVisiblityTrayItem(isMainWindowVisible: boolean): void {
-    if (config.get(ConfigKey.EnableTrayIcon) && tray) {
-      const showWin = trayContextMenu.getMenuItemById('show-win')
-      if (showWin) {
-        showWin.visible = !isMainWindowVisible
-      }
-
-      const hideWin = trayContextMenu.getMenuItemById('hide-win')
-      if (hideWin) {
-        hideWin.visible = isMainWindowVisible
-      }
-
-      tray.setContextMenu(trayContextMenu)
-    }
-  }
-
-  ipc.on('unread-count', (_: Event, unreadCount: number) => {
-    if (is.macos) {
-      app.dock.setBadge(unreadCount ? unreadCount.toString() : '')
-    }
-
-    if (tray) {
-      tray.setImage(unreadCount ? trayIconUnread : trayIcon)
-      if (is.macos) {
-        tray.setTitle(unreadCount ? unreadCount.toString() : '')
-      }
-    }
-  })
-}
-
-function createMailto(url: string): void {
-  replyToWindow = new BrowserWindow({
-    parent: mainWindow
-  })
-
-  replyToWindow.loadURL(
-    `https://mail.google.com/mail/?extsrc=mailto&url=${url}`
-  )
 }
 
 function addCustomCSS(windowElement: BrowserWindow): void {
@@ -305,11 +251,6 @@ async function openExternalUrl(url: string): Promise<void> {
   shell.openExternal(cleanURL)
 }
 
-app.on('open-url', (event, url) => {
-  event.preventDefault()
-  createMailto(url)
-})
-
 app.on('activate', () => {
   if (mainWindow) {
     mainWindow.show()
@@ -350,81 +291,6 @@ app.on('before-quit', () => {
   createWindow()
 
   initOrUpdateMenu()
-
-  if (config.get(ConfigKey.EnableTrayIcon) && !tray) {
-    const appName = app.name
-
-    const macosMenuItems: MenuItemConstructorOptions[] = is.macos
-      ? [
-          {
-            label: 'Show Dock Icon',
-            type: 'checkbox',
-            checked: config.get(ConfigKey.ShowDockIcon),
-            click({ checked }: { checked: boolean }) {
-              config.set(ConfigKey.ShowDockIcon, checked)
-
-              if (checked) {
-                app.dock.show()
-              } else {
-                app.dock.hide()
-              }
-
-              const menu = trayContextMenu.getMenuItemById('menu')
-
-              if (menu) {
-                menu.visible = !checked
-              }
-            }
-          },
-          {
-            type: 'separator'
-          },
-          {
-            id: 'menu',
-            label: 'Menu',
-            visible: !config.get(ConfigKey.ShowDockIcon),
-            submenu: Menu.getApplicationMenu()!
-          }
-        ]
-      : []
-
-    const contextMenuTemplate: MenuItemConstructorOptions[] = [
-      {
-        click: () => {
-          mainWindow.show()
-        },
-        label: 'Show',
-        visible: shouldStartMinimized,
-        id: 'show-win'
-      },
-      {
-        label: 'Hide',
-        visible: !shouldStartMinimized,
-        click: () => {
-          mainWindow.hide()
-        },
-        id: 'hide-win'
-      },
-      ...macosMenuItems,
-      {
-        type: 'separator'
-      },
-      {
-        role: 'quit'
-      }
-    ]
-
-    trayContextMenu = Menu.buildFromTemplate(contextMenuTemplate)
-
-    tray = new Tray(trayIcon)
-    tray.setToolTip(appName)
-    tray.setContextMenu(trayContextMenu)
-    tray.on('click', () => {
-      if (mainWindow) {
-        mainWindow.show()
-      }
-    })
-  }
 
   if (is.macos) {
     if (!config.get(ConfigKey.ShowDockIcon)) {
